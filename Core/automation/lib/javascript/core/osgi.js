@@ -1,68 +1,71 @@
-/*
-This library provides functions for getting, registering, unregistering, and
-finding OSGi services.
-*/
+/**
+ *
+ *
+ * @copyright Copyright (c) 2020
+ *
+ * @author openHAB Scripters Contributors - Jython libraries
+ * @author Michael Murton - port to ES5
+ */
 
-'use strict';
+(function (context) {
+    var BUNDLE = Java.type("org.osgi.framework.FrameworkUtil").getBundle(scriptExtension.class);
+    var BUNDLE_CONTEXT = BUNDLE !== null ? BUNDLE.getBundleContext() : null;
+    var Hashtable = Java.type("java.util.Hashtable");
 
-(function(context) {
-    'use strict';
+    var REGISTERED_SERVICES = {};
 
-    var FrameworkUtil = Java.type("org.osgi.framework.FrameworkUtil");
 
-    var _bundle = FrameworkUtil.getBundle(scriptExtension.class);
-    var bundle_context = (_bundle !== null) ? _bundle.getBundleContext() : null;
-    var registered_services = [];
-
-    context.get_service = function(class_or_name) {
-        if (bundle_context !== null) {
-            var classname = (typeof class_or_name === "object") ? class_or_name.getName() : class_or_name;
-            var ref = bundle_context.getServiceReference(classname);
-            return (ref !== null) ? bundle_context.getService(ref) : null;
+    context.get_service = function (class_or_name) {
+        if (BUNDLE_CONTEXT) {
+            var classname = typeof class_or_name === "string" ? class_or_name : class_or_name.getName();
+            var ref = BUNDLE_CONTEXT.getServiceReference(classname);
+            return ref ? BUNDLE_CONTEXT.getService(ref) : null;
         }
-    }
+        return null;
+    };
 
-    context.find_services = function(class_name, filter) {
-        if (bundle_context !== null) {
-            var refs = bundle_context.getAllServiceReferences(class_name, filter);
-            if (refs !== null) {
-                var services = [];
-                for (var i = 0, size = refs.length; i < size ; i++) {
-                    services.push(bundle_context.getService(refs[i]));
+    context.find_services = function (class_name, service_filter) {
+        if (BUNDLE_CONTEXT) {
+            var references = Java.from(BUNDLE_CONTEXT.getAllServiceReferences(class_name, service_filter));
+            if (references) {
+                var bundles = [];
+                references.forEach(function(ref) {
+                    bundles.push(BUNDLE_CONTEXT.getService(ref));
+                });
+                return bundles;
+            }
+        }
+        return null;
+    };
+
+    context.register_service = function (service, interface_names, properties) {
+        if (properties) {
+            var properties_map = new Hashtable();
+            properties.forEach(function (value, key) {
+                properties_map.put(key, value);
+            });
+            properties = properties_map;
+        }
+        var registered_service = BUNDLE_CONTEXT.registerService(interface_names, service, properties);
+        interface_names.forEach(function(name) {
+            REGISTERED_SERVICES.set(
+                name,
+                {
+                    service: service,
+                    registered_service: registered_service
                 }
-                return services;
-            }
-        }
-    }
+            );
+        });
+        return registered_service;
+    };
 
-    context.register_service = function(service, interface_names, properties) {
-        if (properties !== null) {
-            var util = Java.type("java.util");
-            p = util.Hashtable();
-            for (var i = 0, size = properties.length; i < size ; i++) {
-                p.put(k, v);
+    context.unregister_service = function (service) {
+        REGISTERED_SERVICES.forEach(function (key, value) {
+            if (service === value.service) {
+                REGISTERED_SERVICES.delete(key);
+                value.registered_service.unregister();
             }
-            properties = p;
-        }
-        else {
-            properties = null;
-        }
-        var reg = bundle_context.registerService(interface_names, service, properties);
-        for (var i = 0, size = interface_names.length; i < size ; i++) {
-            registered_services[name] = (service, reg);
-        }
-        return reg;
-    }
-
-    context.unregister_service = function(service) {
-        var keys = registered_services.keys();
-        for (var i = 0, size = keys.length; i < size ; i++) {
-            var registered_service, reg = registered_services[key];
-            if (service == registered_service) {
-                registered_services.splice(i, keys[i]);
-                reg.unregister();
-            }
-        }
-    }
+        });
+    };
 
 })(this);

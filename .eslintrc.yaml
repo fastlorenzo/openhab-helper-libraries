@@ -1,0 +1,126 @@
+parserOptions:
+  ecmaVersion: 5
+  sourceType: script
+  ecmaFeatures:
+    globalReturn: false
+
+env:
+  nashorn: true
+
+# https://eslint.org/docs/rules/
+extends: eslint:recommended
+rules:
+  #Possible Errors
+  no-console: error
+
+  # Best Practices
+  consistent-return: warn
+  default-case: warn
+  default-case-last: error
+  default-param-last: error
+  dot-location: [warn, property]
+  dot-notation: warn
+  eqeqeq: error
+  no-alert: error
+  no-throw-literal: error
+
+  # Variables
+  no-unused-vars: warn
+
+  # Stylistic Issues
+  semi: error
+  semi-spacing: error
+  semi-style: [error, last]
+
+globals:
+  # Default Preset
+  DateTime: readonly
+  LocalTime: readonly
+  State: readonly
+  Command: readonly
+  StringUtils: readonly
+  URLEncoder: readonly
+  FileUtils: readonly
+  FilenameUtils: readonly
+  File: readonly
+  IncreaseDecreaseType: readonly
+  DECREASE: readonly
+  INCREASE: readonly
+  OnOffType: readonly
+  ON: readonly
+  OFF: readonly
+  OpenClosedType: readonly
+  OPEN: readonly
+  CLOSED: readonly
+  StopMoveType: readonly
+  STOP: readonly
+  MOVE: readonly
+  UpDownType: readonly
+  UP: readonly
+  DOWN: readonly
+  UnDefType: readonly
+  NULL: readonly
+  UNDEF: readonly
+  RefrestType: readonly
+  REFRESH: readonly
+  NextPreviousType: readonly
+  NEXT: readonly
+  PREVIOUS: readonly
+  PlayPauseType: readonly
+  PLAY: readonly
+  PAUSE: readonly
+  RewindFastforwardType: readonly
+  REWIND: readonly
+  FASTFORWARD: readonly
+  QuantityType: readonly
+  StringListType: readonly
+  RawType: readonly
+  DateTimeType: readonly
+  DecimalType: readonly
+  HSBType: readonly
+  PercentType: readonly
+  PointType: readonly
+  StringType: readonly
+  SIUnits: readonly
+  ImperialUnits: readonly
+  MetricPrefix: readonly
+  SmartHomeUnits: readonly
+  BinaryPrefix: readonly
+  items: readonly
+  ir: readonly
+  itemRegistry: readonly
+  things: readonly
+  rules: readonly
+  events: readonly
+  actions: readonly
+  scriptExtension: readonly
+  se: readonly
+
+  # RuleSimple Preset
+  ActionType: readonly
+  ConfigDescriptionParameter: readonly
+  ModuleType: readonly
+  SimpleActionHandler: readonly
+  SimpleConditionHandler: readonly
+  SimpleRule: readonly
+  SimpleTriggerHandler: readonly
+  TriggerType: readonly
+  Visibility: readonly
+
+  # RuleSupport Preset
+  Action: readonly
+  ActionBuilder: readonly
+  Condition: readonly
+  ConditionBuilder: readonly
+  Configuration: readonly
+  ModuleBuilder: readonly
+  Rule: readonly
+  Trigger: readonly
+  TriggerBuilder: readonly
+  automationManager: readonly
+  ruleRegistry: readonly
+
+  # RuleFactories Preset
+  ActionHandlerFactory: readonly
+  ConditionHandlerFactory: readonly
+  TriggerHandlerFactory: readonly
